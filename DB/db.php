@@ -3,7 +3,7 @@
 $createDB = " CREATE DATABASE tree";
 
 $createTable = "CREATE TABLE tree_table (
-    id INTEGER AUTO_INCREMENT NOT NULL,
+    id INTEGER NOT NULL,
     parent_id INTEGER NOT NULL,
     text VARCHAR(32) NOT NULL,
     PRIMARY KEY(id),
