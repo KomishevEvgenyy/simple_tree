@@ -1,19 +1,19 @@
 <?php
 
-$createDB = " CREATE DATABASE tree";
-
-$createTable = "CREATE TABLE tree_table (
-    id INTEGER NOT NULL,
-    parent_id INTEGER NOT NULL,
-    text VARCHAR(32) NOT NULL,
-    PRIMARY KEY(id),
-)";
-
+//$createDB = " CREATE DATABASE tree";
+//
+//$createTable = "CREATE TABLE tree_table (
+//    id INT NOT NULL,
+//    parent_id INT NOT NULL,
+//    text VARCHAR(32) NOT NULL,
+//    PRIMARY KEY(id),
+//)";
 
 $host = 'localhost';
 $user = 'root';
 $password = 'root';
 $dbName = 'tree';
+
 
 $link = mysqli_connect($host, $user, $password, $dbName);
 
