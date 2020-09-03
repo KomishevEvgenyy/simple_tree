@@ -12,7 +12,7 @@
 //         $(this).closest('li').append(root);
 //         let rootText = $('#root').text();
 //         $.ajax({
-//             url: 'app/main.php',
+//             url: 'app/create.php',
 //             type: 'POST',
 //             data: ({textAdd : rootText}),
 //             dataType: 'text',
@@ -25,7 +25,7 @@
 //         $(this).closest('li').remove();
 //         let rootText = $('#root').text();
 //         $.ajax({
-//             url: 'app/main.php',
+//             url: 'app/create.php',
 //             type: 'POST',
 //             data: ({textDel : rootText}),
 //             dataType: 'text',
@@ -36,22 +36,23 @@
 //     });
 // });
 // Второй вариант если не указывать поле id как auto increment
-var lastId = 0;     // последний созданный id
+let lastId = 0;     // последний созданный id
 
 $(document).ready(function () {
     $("#create-root").click(function () {
-        $("#tree").append(addRoot($(this).siblings('p').attr('elem_id')));
+        $("#tree").append(createRoot($(this).siblings('p').attr('elem_id')));
     });
     $('#tree').on('click', '.add', function () {
-        $(this).closest('li').append(addRoot($(this).siblings('p').attr('elem_id')));
+        $(this).closest('li').append(createRoot($(this).siblings('p').attr('elem_id')));
     });
     $('#tree').on('click', '.delete', function () {
         $(this).closest('li').remove();
     });
 });
 
-// метод для добавления элемента. Принимает id родителя
-function addRoot(parent_id) {
+
+function createRoot(parent_id) {
+    // метод для добавления элемента. Принимает id родителя
     parent_id = parent_id ? parent_id : 0;
     let text = "Root";
     let root = "<ul style='list-style-type: none;'>" +
@@ -60,16 +61,36 @@ function addRoot(parent_id) {
 
     // отправка данных на сервер.
     $.ajax({
-            url: 'app/main.php',
+            url: 'app/create.php',
             type: 'POST',
-            data: ({id: lastId, parent_id: parent_id, text: text}),
+            data: ({method: 'create', id: lastId, parent_id: parent_id, text: text}),
             dataType: 'text',
-            // success: function(data){
-            //     alert(data);
-            // }
+            // success: show(data)
         });
     return root;
 }
+
+function show(data){
+    // метод для вывода узлов из базы данных
+}
+
+function edit(id) {
+    // метод для редактирования данных
+}
+
+function deleteRoot(id, parent_id){
+    // метод для удаления корня
+    // отправка данных на сервер.
+    $.ajax({
+        url: 'app/delete.php',
+        type: 'POST',
+        data: ({method: 'delete', id: lastId}),
+        dataType: 'text',
+        // success: show(data)
+    });
+}
+
+
 
 
 
