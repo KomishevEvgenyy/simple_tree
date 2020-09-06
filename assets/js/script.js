@@ -21,12 +21,13 @@ function createRoot(parent_id) {
         "</li></ul>";
     // отправка данных на сервер.
     $.ajax({
-        url: 'app/create.php',
+        url: 'app/main.php',
         type: 'POST',
-        data: ({create: 'create', id: lastId, parent_id: parent_id, text: text}),
+        data: ({id: lastId, parent_id: parent_id, text: text}),
         dataType: 'text',
-        // success: function show(data) {
-        // }
+        success: function(data) {
+            alert(data['success']);
+        }
     });
     return root;
 }
@@ -34,6 +35,13 @@ function showRoot(data) {
     $('#tree').find('#root').each(function (index, elem) {
         alert(elem);
     });
+    $.ajax({
+        url: 'app/TreeElement.php',
+        type: 'GET',
+        success: function(data){
+
+        }
+    })
 }
 function editRoot(id) {
     // метод для редактирования данных
@@ -43,11 +51,12 @@ function deleteRoot(parent_id) {
     // отправка данных на сервер.
 
     $.ajax({
-        url: 'app/delete.php',
-        type: 'delete',
+        url: 'app/main.php',
+        type: 'DELETE',
         data: ({parent_id: parent_id}),
         dataType: 'text',
-        // success: show(data)
+        // success: show(data){
+        // }
     });
 }
 

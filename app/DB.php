@@ -2,11 +2,13 @@
 
 namespace app;
 
+require_once '../config.php';
+
 class DB
 {
     public $pdo;
 
-    public function __construct($db, $username = NULL, $password = NULL, $host = '127.0.0.1', $port = 3306, $options = [])
+    public function __construct($db = DB_NAME, $username = DB_USER, $password = DB_PASSWORDS, $host = DB_HOST, $options = [])
     {
         $default_options = [
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -14,7 +16,7 @@ class DB
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         $options = array_replace($default_options, $options);
-        $dsn = "mysql:host=$host;dbname=$db;port=$port;charset=utf8mb4";
+        $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
 
         try {
             $this->pdo = new \PDO($dsn, $username, $password, $options);
@@ -33,4 +35,4 @@ class DB
     }
 }
 
-$db = new DB();
+
