@@ -1,6 +1,5 @@
 // Второй вариант если не указывать поле id как auto increment
 let lastId = 0;     // последний созданный id
-
 $(document).ready(function () {
     $("#create-root").click(function () {
         $("#tree").append(createRoot($(this).siblings('p').attr('elem_id')));
@@ -13,7 +12,6 @@ $(document).ready(function () {
     });
 });
 
-
 function createRoot(parent_id) {
     // метод для добавления элемента. Принимает id родителя
     parent_id = parent_id ? parent_id : 0;
@@ -21,7 +19,6 @@ function createRoot(parent_id) {
     let root = "<ul style='list-style-type: none;'>" +
         "<li><p id='root' elem_id='" + (++lastId) + "' parent_id='" + parent_id + "' class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button > " +
         "</li></ul>";
-
     // отправка данных на сервер.
     $.ajax({
         url: 'app/create.php',
@@ -33,24 +30,22 @@ function createRoot(parent_id) {
     });
     return root;
 }
-
-function show(data) {
+function showRoot(data) {
     $('#tree').find('#root').each(function (index, elem) {
         alert(elem);
     });
 }
-
-function edit(id) {
+function editRoot(id) {
     // метод для редактирования данных
 }
-
-function deleteRoot(id, parent_id) {
+function deleteRoot(parent_id) {
     // метод для удаления корня
     // отправка данных на сервер.
+
     $.ajax({
         url: 'app/delete.php',
-        type: 'POST',
-        data: ({method: 'delete', id: lastId, parent_id: parent_id}),
+        type: 'delete',
+        data: ({parent_id: parent_id}),
         dataType: 'text',
         // success: show(data)
     });

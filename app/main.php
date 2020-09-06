@@ -1,26 +1,26 @@
 <?php
 
-require '../db/db.php';
+namespace app;
 
-if (isset($_POST["create"])){
+if (isset($_POST["create"])) {
     $id = $_POST["id"];
     $parent_id = $_POST["parent_id"];
     $text = $_POST["text"];
-    $create = new Create();
-    $create->createRecord($id, $parent_id, $text, $link);
-}
-elseif (isset($_POST["delete"])){
-    $deleteId = $_POST["id"];
-    $delete = new Delete();
-    $delete->deleteRecord($deleteId, $link);
-}
-elseif(isset($_POST["edit"])){
-    $editId = $_POST["edit"];
-    $edit = new Edit();
-    $edit->editRecord($editId, $link);
-}
-elseif (isset($_POST["show"])){
-    $showId = $_POST["show"];
-    $show = new Show();
-    $show->showRecord($showId, $link);
+    $create = new TreeElement();
+    $create->create($id, $parent_id, $text);
+} elseif (isset($_DELETE["delete"])) {
+    $deleteId = $_DELETE["id"];
+    $deleteParentId = $_DELETE["parent_id"];
+    $delete = new TreeElement();
+    $delete->delete($deleteId, $deleteParentId);
+} elseif (isset($_PUT["edit"])) {
+    $editId = $_PUT["edit"];
+    $editParentId = $_PUT["parent_id"];
+    $editText = $_PUT["text"];
+    $edit = new TreeElement();
+    $edit->edit($editId, $editParentId, $editText);
+} elseif (isset($_GET["show"])) {
+    $showId = $_GET["show"];
+    $show = new TreeElement();
+    $show->show($showId);
 }
