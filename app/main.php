@@ -2,7 +2,7 @@
 
 namespace app;
 
-if (isset($_POST[''])) {
+if (isset($_POST['id'])) {
     $id = $_POST["id"];
     $parent_id = $_POST["parent_id"];
     $text = $_POST["text"];
