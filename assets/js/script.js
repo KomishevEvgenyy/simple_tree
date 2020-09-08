@@ -1,103 +1,103 @@
-// Второй вариант если не указывать поле id как auto increment
-let lastId = 0;     // последний созданный id
 $(document).ready(function () {
     $("#create-root").click(function () {
-        $("#tree").append(createRoot($(this).siblings('p').attr('elem_id')));
+        createRoot($(this).siblings('li').attr('id'));
     });
+    showRoot();
     $('#tree').on('click', '.add', function () {
-        $(this).closest('li').append(createRoot($(this).siblings('p').attr('elem_id')));
+        createNode($(this).siblings('li').attr('id'));
     });
     $('#tree').on('click', '.delete', function () {
-        $(this).closest('li').remove();
+        deleteRoot($(this).siblings('li').attr('id'));
     });
 });
 
 function createRoot(parent_id) {
-    // метод для добавления элемента. Принимает id родителя
+    // метод для добавления корня. Принимает id родителя
     parent_id = parent_id ? parent_id : 0;
     let text = "Root";
-    let root = "<ul style='list-style-type: none;'>" +
-        "<li><p id='root' elem_id='" + (++lastId) + "' parent_id='" + parent_id + "' class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button > " +
-        "</li></ul>";
     // отправка данных на сервер.
     $.ajax({
         url: 'app/main.php',
         type: 'POST',
-        data: ({id: lastId, parent_id: parent_id, text: text}),
+        data: ({parent_id: parent_id, text: text}),
         dataType: 'text',
-        success: function(data) {
-            alert(data['success']);
+        success: function (data) {
+            let result = JSON.parse(data);
+            if (result.success) {
+                $('#tree').append($("<ul id='" + result.id + "' parent_id='" + parent_id + "' " +
+                    "style='list-style-type: none;'>" + "<li><p class='mb-0 pl-3'>" + text + "" +
+                    "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+" +
+                    "</button > " + "</li></ul>"));
+            }
         }
     });
-    return root;
 }
-function showRoot(data) {
-    $('#tree').find('#root').each(function (index, elem) {
-        alert(elem);
-    });
-    $.ajax({
-        url: 'app/TreeElement.php',
-        type: 'GET',
-        success: function(data){
 
+function createNode(parent_id) {
+// метод для добавления нового узла. Принимает id родителя
+    parent_id = parent_id ? parent_id : 0;
+    let text = "Root";
+    // отправка данных на сервер.
+    $.ajax({
+        url: 'app/main.php',
+        type: 'post',
+        data: ({parent_id: parent_id, text: text}),
+        dataType: 'text',
+        success: function (data) {
+            let result = JSON.parse(data);
+            if (result.success) {
+                $('ul #' + result.id - 1).append($("<ul id='" + result.id + "' parent_id='" + parent_id + "' " +
+                    "style='list-style-type: none;'>" + "<li><p class='mb-0 pl-3'>" + text + "" +
+                    "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+" +
+                    "</button > " + "</li></ul>"));
+            }
         }
-    })
+    });
 }
+
+function showRoot() {
+    // метод для вывода дерева на экран
+    $.ajax({
+        url: 'app/main.php',
+        type: 'get',
+        success: function (data) {
+            if (data) {
+                let result = JSON.parse(data);
+                $.each(result, function (key, value) {
+                    if (key === 0) {
+                        $('#tree').append($("<ul parent_id='" + value['parent_id'] + "' " +
+                            "style='list-style-type: none;'>" + "<li id='" + value['id'] + "'><p class='mb-0 pl-3'>" + value['text'] + "" +
+                            "</p><button class='delete btn btn-danger'>-</button> " +
+                            "<button class='add btn btn-success'>+</button > " + "</li></ul>"));
+                    } else {
+                        $('ul #' + value['id'] - 1).append($("<ul " +
+                            "style='list-style-type: none;'>" + "<li id='" + value['id'] + "'><p parent_id='" + value['parent_id'] + "' " +
+                            "class='mb-0 pl-3'>" + value['text'] + "" +
+                            "</p><button class='delete btn btn-danger'>-</button> " +
+                            "<button class='add btn btn-success'>+</button > " + "</li></ul>"));
+                    }
+                });
+            } else return "";
+        }
+    });
+}
+
 function editRoot(id) {
     // метод для редактирования данных
 }
-function deleteRoot(parent_id) {
-    // метод для удаления корня
-    // отправка данных на сервер.
 
+function deleteRoot(id) {
+
+    // метод для удаления элемента с его дочерними узлами
     $.ajax({
         url: 'app/main.php',
-        type: 'DELETE',
-        data: ({parent_id: parent_id}),
+        type: 'delete',
+        data: ({id: id}),
         dataType: 'text',
-        // success: show(data){
-        // }
+        success: function (data) {
+            // if (result.success) {
+            //     $(this).closest('li').remove();
+            // }
+        }
     });
 }
-
-// Первый вариант
-// let parentId;
-// $(document).ready(function () {
-//     let root = "<ul class='ul' style='list-style-type: none;'>" +
-//         "<li value='0'><p id='root' class='mb-0 pl-3'>Root</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
-//         "</li></ul>";
-//     $("#create-root").click(function () {
-//         $("#tree").append(root);
-//         $("#create-root").remove();
-//     });
-//     $('#tree').on('click', '.add', function () {
-//         $(this).closest('li').append(root);
-//         let rootText = $('#root').text();
-//         $.ajax({
-//             url: 'app/create.php',
-//             type: 'POST',
-//             data: ({textAdd : rootText}),
-//             dataType: 'text',
-//             success: function(data){
-//                 alert(data);
-//             }
-//         });
-//     });
-//     $('#tree').on('click', '.delete', function () {
-//         $(this).closest('li').remove();
-//         let rootText = $('#root').text();
-//         $.ajax({
-//             url: 'app/create.php',
-//             type: 'POST',
-//             data: ({textDel : rootText}),
-//             dataType: 'text',
-//             // success: function(data){
-//             //     alert(data);
-//             // }
-//         });
-//     });
-// });
-
-
-
-

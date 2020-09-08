@@ -1,0 +1,9 @@
+{
+  "name": "vendor_name/JSTree",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "app\\": "app"
+    }
+  }
+}
