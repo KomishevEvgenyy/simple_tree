@@ -13,8 +13,10 @@
 </head>
 <body class="my-2 mx-3">
 <button id="create-root" class="btn btn-success">Create root</button>
-<div id="tree"></div>
+<div id="tree">
+
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="assets/js/script.js?35123123"></script>
+<script type="text/javascript" src="assets/js/script.js?351231"></script>
 </body>
 </html>

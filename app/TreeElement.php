@@ -30,8 +30,8 @@ class TreeElement
             );
         }
         print json_encode([
-            'success' => true,
-            'id' => $data->lastInsertID()
+
+            'id' => $data->fetchAll()
         ]);
 //        $error = 'connection error';
 //        $data = $this->db->query("INSERT INTO tree_table(parent_id, text) VALUES ({$parentId}, '{$text}')");
