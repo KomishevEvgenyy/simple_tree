@@ -145,7 +145,7 @@ class DB
 
     public function lastInsertID()
     {
-        // PDO метод возвращает посдледней значение поля id добавленной строки запроса
+        // PDO метод возвращает последней значение поля id добавленной строки запроса
         return $this->connection->insert_id;
     }
 

@@ -4,10 +4,10 @@ $(document).ready(function () {
     });
     showRoot();
     $('#tree').on('click', '.add', function () {
-        createRoot($(this).siblings('li').attr('id'));
+        createNode($(this).closest('li').attr('id'));
     });
     $('#tree').on('click', '.delete', function () {
-        deleteRoot($(this).siblings('li').attr('id'));
+        deleteRoot($(this).closest('li').attr('id'));
     });
 });
 
@@ -22,26 +22,28 @@ function createRoot(parent_id) {
         data: ({parent_id: parent_id, text: text}),
         dataType: 'text',
         success: function (data) {
-            if (data) {
-                let result = JSON.parse(data);
-                console.log(result);
-                $.each(result, function (key, value) {
-                    console.log(key, value);
-                    if (value.parent_id === 0) {
-                        $('#tree').append($("<ul style='list-style-type: none;'><li id='"+ value['id'] +"' " +
-                            "parent_id='"+ value['parent_id'] +"'><p class='mb-0 pl-3'>" + value['text'] + "</p>" +
-                            "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
-                    }
-                });
-                $.each(result, function(i, item) {
-                    if (item.parent_id > 0){
-                        $('#' + item.parent_id).append($("<ul style='list-style-type: none;'><li id='"+ item['id'] +"' " +
-                            "parent_id='"+ item['parent_id'] +"'><p class='mb-0 pl-3'>" + item['text'] + "</p>" +
-                            "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
-                    }
-                });
-            } else return "";
+            let result = JSON.parse(data);
+            $('#tree').append($("<ul style='list-style-type: none;'><li id='"+ result.id +"' " +
+                "parent_id='"+ parent_id +"'><p class='mb-0 pl-3'>" + text + "</p>" +
+                "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
+        }
+    });
+}
 
+function createNode(parent_id){
+    parent_id = parent_id ? parent_id : 0;
+    let text = "Root";
+    // отправка данных на сервер.
+    $.ajax({
+        url: 'app/main.php',
+        type: 'post',
+        data: ({parent_id: parent_id, text: text}),
+        dataType: 'text',
+        success: function (data) {
+            let result = JSON.parse(data);
+            $('#' + parent_id).append($("<ul style='list-style-type: none;'><li id='"+ result.id +"' " +
+                "parent_id='"+ parent_id +"'><p class='mb-0 pl-3'>" + text + "</p>" +
+                "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
         }
     });
 }
@@ -54,9 +56,7 @@ function showRoot() {
         success: function (data) {
             if (data) {
                 let result = JSON.parse(data);
-                console.log(result);
                 $.each(result, function (key, value) {
-                    console.log(key, value);
                     if (value.parent_id === 0) {
                         // Если parent_id равен 0 то элемент добавляется в блоке div с id=tree
                         $('#tree').append($("<ul style='list-style-type: none;'><li id='"+ value['id'] +"' " +
@@ -84,7 +84,6 @@ function editRoot(id) {
 
 
 function deleteRoot(id) {
-
     // метод для удаления элемента с его дочерними узлами
     $.ajax({
         url: 'app/main.php',
@@ -97,4 +96,8 @@ function deleteRoot(id) {
             // }
         }
     });
+}
+
+function addNode(data){
+
 }

@@ -31,17 +31,8 @@ class TreeElement
         }
         print json_encode([
 
-            'id' => $data->fetchAll()
+            'id' => $data->lastInsertID()
         ]);
-//        $error = 'connection error';
-//        $data = $this->db->query("INSERT INTO tree_table(parent_id, text) VALUES ({$parentId}, '{$text}')");
-//        //var_dump($data->fetchArray());
-//        if (isset($data)) {
-//            //$this->show();
-//            //return $data;
-//        } else {
-//            return ['success' => false, 'error' => $error];
-//        }
     }
 
     /**
@@ -59,15 +50,6 @@ class TreeElement
             );
         }
         print json_encode($data->fetchAll());
-//        $error = 'connection error';
-//        $data = $this->db->query("SELECT * FROM tree_table");//("SELECT * FROM tree_table WHERE id=?", [$id]);
-//        $result = json_encode($data->fetchAll());
-//       //var_dump($result);
-//        if (isset($result)) {
-//            print $result;
-//        } else {
-//            return ['success' => false, 'error' => $error];
-//        }
     }
 
     public function edit($id, $parentId, $text)
@@ -78,7 +60,6 @@ class TreeElement
 
     public function delete($id)
     {
-        // привызове метода не получает id селектора
         // метод для удаления файла
         try {
             $this->db->query("DELETE FROM tree_table WHERE id={$id}, parent_id={$id}");
