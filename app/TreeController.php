@@ -4,16 +4,29 @@ namespace app;
 
 require_once 'TreeElement.php';
 
+/*
+ * Контроллер осуществляет вызов нужного метода который соответствует типу получаемого запроса. Принимает тело запроса
+ * и после передает входные данные в класс TreeElement для выполнения запроса к базе данных.
+ * */
+
 class TreeController
 {
     public static function GET($data)
     {
+        /*
+         * Метод для запроса типа GET. Вызывает метод show класса TreeElement для отправки на клиентскую часть
+         * данные из БД
+         * */
         $show = new TreeElement();
         print $show->show();
     }
 
     public static function POST($data)
     {
+        /*
+         * Метод для запроса типа POST. Вызывает метод create класса TreeElement для записи данных полученых с
+         * клиентсвкой части в БД
+         * */
         $parent_id = $data["parent_id"];
         $text = $data["text"];
         $create = new TreeElement();
@@ -22,18 +35,19 @@ class TreeController
 
     public static function DELETE($data)
     {
-        //$result = file_get_contents('php://input');
-        // получения тела запроса так как метод HTTP DELETE не передается по $_REQUEST
+        /*
+         * Метод для запроса типа DELETE. Вызывает метод destroy класса TreeElement для удаления данных по полю id.
+         * Принимает JSON объект
+         * */
         $id = json_decode($data, true);
-        // переводим json в массив
+        // преобразование json в массив
         $del = new TreeElement();
         print $del->destroy($id['id']);
     }
 
     public static function Put($data)
     {
-        var_dump($_SERVER['REQUEST_METHOD']);
-        var_dump(file_get_contents('php://input'));
+        //  Метод для запроса типа PUT
         echo 'Put method';
     }
 }

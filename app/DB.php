@@ -6,35 +6,53 @@ require_once '../config.php';
 
 use mysqli;
 
+/*
+ * Модель DB служит для установление связи с базой данных которое устанавливается автоматически при загрузки обьекта
+ * даного класса. Данные для подключение к БД находятся в файле config.php в виде глобальных переменных.
+ * Так же модель находится метод для отправки запросов в БД query.
+ * метод для получения всех записей из баззы данных fetchAll()
+ * метод для получения всех записей из баззы данных в виде массива fetchArray()
+ * метод для разрыва соединения с БД close()
+ * метод который возвращает число строк из базы данных numRows()
+ * метод который возвращает число добавленных строк в БД, которые были затронуты последним запросом affectedRows()
+ * метод который возвращает последнее значение поля id которые были затронуты последним запросом lastInsertID()
+ * метод который отлавливает полученые ошиьки error()
+ * метод для проверки имеет ли строку передаваемый аргумент _gettype()
+ * */
+
 class DB
 {
-    // класс для подключение к БД.  Класс использует обьектно ориентированый стиль расширения mysqli
+    //  connection является объктом класса mysqli которое осузествляет подключение в БД
     protected $connection;
+    //  query осуществляет манипуляции с запросами и закрытия соединении с БД после выполнения запросов
     protected $query;
+    //  show_errors служит для отлавливания ошибок. Является объктом класса Exception
     protected $show_errors = TRUE;
+    //  query_closed служит для проверки закрыто соединение с БД после последней связи или нет
     protected $query_closed = TRUE;
+    //  счетчик запросов
     public $query_count = 0;
 
     public function __construct($dbhost = DB_HOST, $dbuser = DB_USER, $dbpass = DB_PASSWORD, $dbname = DB_NAME, $charset = 'utf8')
     {
-        $this->connection = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
         // создания подключения к таблици базы данных
+        $this->connection = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+        // выполнить error если произошла ошибка соединения
         if ($this->connection->connect_error) {
-            // выполнить error если произошла ошибка соединения
             $this->error('Failed to connect to MySQL - ' . $this->connection->connect_error);
         }
+        // если подключение прошло удачно добавить в подключение кодировку utf8
         $this->connection->set_charset($charset);
-        // если подключение прошло удачно добавить в подключение кодлировку utf8
     }
 
     public function query($query)
     {
-        // метод для отправки запроса в БД
+        // если подключение к БД ранее не было закрыто то закрыть
         if (!$this->query_closed) {
             $this->query->close();
         }
+        // если есть подключение к БД записать в переменную query подготовленный запрос
         if ($this->query = $this->connection->prepare($query)) {
-            // если есть connect с БД записать в переменную query подготовленный запрос
             if (func_num_args() > 1) {
                 $x = func_get_args();
                 $args = array_slice($x, 1);
@@ -54,10 +72,10 @@ class DB
                 array_unshift($args_ref, $types);
                 call_user_func_array(array($this->query, 'bind_param'), $args_ref);
             }
+            // запуск подготовленного запроса на выполнения
             $this->query->execute();
-            // запусе подготовленного запроса на выполнения
+            // если есть ошибка вызвать метод error для вывода данной ошибки
             if ($this->query->errno) {
-                // если есть ошибка вызвать метод error для вывода данной ошибки
                 $this->error('Unable to process MySQL query (check your params) - ' . $this->query->error);
             }
             $this->query_closed = FALSE;
@@ -72,7 +90,6 @@ class DB
 
     public function fetchAll($callback = null)
     {
-        // метод получает все строки с базы данных в виже хеш-таблицы
         $params = array();
         $row = array();
         $meta = $this->query->result_metadata();
@@ -100,21 +117,20 @@ class DB
 
     public function fetchArray()
     {
-        // метод который возвращает массив данных каждого столбца таблицы
         $params = array();
         $row = array();
-        $meta = $this->query->result_metadata();
         // получение метаданных таблицы после запроса
+        $meta = $this->query->result_metadata();
+        // получение имен столбцов из метаданных таблицы и запись в массив
         while ($field = $meta->fetch_field()) {
-            // получение имен столбцов из метаданных таблицы и запись в массив
             $params[] = &$row[$field->name];
         }
-        call_user_func_array(array($this->query, 'bind_result'), $params);
         // методом обратного вызова вызываем функцию query которой передаем параметры столбцов полученых ранее
-        $result = array();
+        call_user_func_array(array($this->query, 'bind_result'), $params);
         // массив в который будут записаны строки с данными из таблицы
+        $result = array();
+        // получаем следующую строку индексированную как именнами таблицы так и их номерами
         while ($this->query->fetch()) {
-            // получаем следующую строку индексированную как именнами таблицы так и их номерами
             foreach ($row as $key => $val) {
                 $result[$key] = $val;
             }
@@ -126,26 +142,22 @@ class DB
 
     public function close()
     {
-        // метод для зарытия соединения с базой
         return $this->connection->close();
     }
 
     public function numRows()
     {
-        // метод возвращает число строк из запроса в БД
         $this->query->store_result();
         return $this->query->num_rows;
     }
 
     public function affectedRows()
     {
-        // метод возвращает число добавленных строк в БД, которые были затронуты последним запросом
         return $this->query->affected_rows;
     }
 
     public function lastInsertID()
     {
-        // PDO метод возвращает последней значение поля id добавленной строки запроса
         return $this->connection->insert_id;
     }
 
@@ -155,7 +167,6 @@ class DB
      */
     public function error($error)
     {
-        // метод отлавливает ошибки
         if ($this->show_errors) {
             throw new \Exception($error);
         }
@@ -163,12 +174,10 @@ class DB
 
     private function _gettype($var)
     {
-        // метод для провекри на строки
         if (is_string($var)) return 's';
         if (is_float($var)) return 'd';
         if (is_int($var)) return 'i';
         return 'b';
     }
-
 }
 

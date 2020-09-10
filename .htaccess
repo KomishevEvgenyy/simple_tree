@@ -1,1 +1,6 @@
+RewriteEngine On
+RewriteBase /
+
 AddDefaultCharset UTF8
+
+
