@@ -58,11 +58,18 @@ class TreeElement
 
     }
 
-    public function delete($id)
+    /**
+     * @param $id
+     * @return string
+     */
+    public function destroy($id)
     {
         // метод для удаления файла
         try {
-            $this->db->query("DELETE FROM tree_table WHERE id={$id}, parent_id={$id}");
+            foreach ($id as $value) {
+                $this->db->query("DELETE FROM tree_table WHERE id={$value}"); // XOR parent_id={$id}
+            }
+            //$this->db->query("DELETE FROM tree_table WHERE id={$result}"); // XOR parent_id={$id}
         } catch (\Exception $e) {
             print json_encode(
                 ['success' => false, 'error' => $e->getMessage()]

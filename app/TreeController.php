@@ -20,15 +20,20 @@ class TreeController
         print $create->create($parent_id, $text);
     }
 
-    public static function Delete($data)
+    public static function DELETE($data)
     {
-        $id = $data['id'];
-        $delete = new TreeElement();
-        print $delete->delete($id);
+        //$result = file_get_contents('php://input');
+        // получения тела запроса так как метод HTTP DELETE не передается по $_REQUEST
+        $id = json_decode($data, true);
+        // переводим json в массив
+        $del = new TreeElement();
+        print $del->destroy($id['id']);
     }
 
     public static function Put($data)
     {
-        print 'put';
+        var_dump($_SERVER['REQUEST_METHOD']);
+        var_dump(file_get_contents('php://input'));
+        echo 'Put method';
     }
 }
