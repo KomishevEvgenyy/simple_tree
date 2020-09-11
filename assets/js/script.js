@@ -36,7 +36,7 @@ $(document).ready(function () {
                 $('#open-modal').modal('hide');
                 stopCount();
             }
-        }, 10000000);
+        }, 20000);
         deleteRoot($(this).closest('li').attr('id'));
     });
 
