@@ -2,30 +2,30 @@ let modalTimer;
 $(document).ready(function () {
 
     /*
-     * При срабатывании события click кпопки добавления корня "Create Root" вызывается функция createRoot которому
-     * передается id корня.
+     * When the click event of the "Create Root" button is triggered, the createRoot function is called.
+     * the id of the root is passed.
      * */
     $("#create-root").click(function () {
         createRoot($(this).closest('li').attr('id'));
     });
 
-    //  вызов функции для получение данных из БД при загрузки страницы если такие имеются.
+    //  Calling a function to get data from the database when the page is loaded, if any.
     showRoot();
 
     /*
-     * При срабатывании события click кпопки добавления узла "Root" вызывается функция createNode которому
-     * передается id узла.
+     * When the click event of the "Root" node adding button is triggered, the createNode function is called.
+     * the node id is passed.
      * */
     $('#tree').on('click', '.add', function () {
         createNode($(this).closest('li').attr('id'));
     });
 
     /*
-     * При срабатывании события click кпопки удалении узла "Root":
-     * 1 - открывается модальное;
-     * 2 - вызывается функция timeCount которая запускает таймер 20 секунд, после которого окно будет закрыто
-     * автоматически если не выбрать одно из действий
-     * 3 - вызывается функция сброса таймера
+     * When the click event of the "Root" node deletion button is triggered:
+     * 1 - a modal window opens;
+     * 2 - the timeCount () function is called, which starts a timer for 20 seconds, after which the window will be
+     * closed automatically if you do not select one of the actions
+     * 3 - the timer reset function is called
      * */
     $('#tree').on('click', '.delete', function () {
         $('#open-modal').modal('show');
@@ -39,10 +39,10 @@ $(document).ready(function () {
     });
 
     /*
-    * При срабатывании события click кпопки подтверждения удаления узла "Yes":
-    * 1 - вызывается функция deleteRoot которому передается id узла
-    * 2 - закрывается подальное окно
-    * 3 - вызывается функция сброса таймера
+    * When the click event of the "Yes" node deletion confirmation button is triggered:
+    * 1 - the deleteRoot() function is called to which the node id is passed
+    * 2 - the modal window is closed
+    * 3 - the timer reset function is called
     * */
     $('#open-modal').on('click', '#delRoot', function () {
         deleteRoot($('.delete').closest('li').attr('id'));
@@ -51,9 +51,9 @@ $(document).ready(function () {
     });
 
     /*
-    * При срабатывании события click кпопки отмены "No" или x:
-    * 1 - закрывается подальное окно
-    * 2 - вызывается функция сброса таймера
+    * When the click event of the cancel button "No" or x is triggered:
+    * 1 - the modal window is closed
+    * 2 - the timer reset function is called
     * */
     $('#open-modal').on('click', '.exit', function () {
         $('#open-modal').modal('hide');
@@ -62,8 +62,8 @@ $(document).ready(function () {
 });
 
 /*
- * Функция для добавления корня. Принимает id родителя. В случае эсли parent_id не существует присвоить
- * переменной parent_id значение 0
+ * Function for adding a root. Accepts the id of the parent. If parent_id does not exist, assign
+ * variable parent_id value 0
  * */
 function createRoot(parent_id) {
     parent_id = parent_id ? parent_id : 0;
@@ -73,16 +73,16 @@ function createRoot(parent_id) {
         type: 'post',
         data: {parent_id: parent_id, text: text},
         dataType: 'text',
-        //  получение данных из сервера в виде объекта JSON и приобразование его в массив
+        //  Receiving data from the server as a JSON object and converting it to an array
         success: function (data) {
             let result = JSON.parse(data);
-            //  добавление корня в элемент DOM
-            $('#tree').append($("<ul style='list-style-type: none;'><li id='" + result.id + "' parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
+            //  Adding a root to a DOM element
+            $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + result.id + "' parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
         }
     });
 }
 
-// Функция для добавления узла. Принимает id родителя.
+// Function for adding a node. Accepts the id of the parent.
 function createNode(parent_id) {
     parent_id = parent_id ? parent_id : 0;
     let text = "Root";
@@ -91,39 +91,41 @@ function createNode(parent_id) {
         type: 'post',
         data: {parent_id: parent_id, text: text},
         dataType: 'text',
-        //  получение данных из сервера в виде объекта JSON и приобразование его в массив
+        //  Receiving data from the server as a JSON object and converting it to an array
         success: function (data) {
             let result = JSON.parse(data);
-            //  добавление узла в родительский элемент DOM
-            $('#' + parent_id).append($("<ul style='list-style-type: none;'><li id='" + result.id + "' parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
+            //  Adding a node to a parent DOM element
+            $('#' + parent_id).append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + result.id + "' parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
         }
     });
 }
 
-//  Метод для данных полученых из серверной части приложение. Если данные отсутствуют то выводит пустую строку
+//  Method for data received from the server side of the application. If there is no data, then it
+//  outputs an empty string
 function showRoot() {
     $.ajax({
         url: 'app/main.php',
         type: 'get',
-        //  получение данных из сервера в виде объекта JSON и приобразование его в массив
+        //  Receiving data from the server as a JSON object and converting it to an array
         success: function (data) {
             if (data) {
                 let result = JSON.parse(data);
-                //  нулевой элемент массива выводится в элементе div с id=tree как корень дерева DOM
+                //  Array element zero is rendered in the div element with id = tree as the root of the DOM tree
                 $.each(result, function (key, value) {
                     if (value.parent_id === 0) {
-                        // Если parent_id равен 0 то элемент добавляется в тег div с id=tree
-                        $('#tree').append($("<ul style='list-style-type: none;'><li id='" + value['id'] + "' " +
+                        // If parent_id is 0, then the element is added in the div tag with id = tree
+                        $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + value['id'] + "' " +
                             "parent_id='" + value['parent_id'] + "'><p class='mb-0 pl-3'>" + value['text'] + "</p>" +
                             "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
                             "<li></ul>"));
                     }
                 });
-                //  Элементы массива которые больше 0-го элемента и являются узлами, выводится в родительском теге li с id=родителя
+                //  Array elements that are greater than the 0th element and are nodes are displayed in the parent
+                //  li tag with id = parent
                 $.each(result, function (i, item) {
                     if (item.parent_id > 0) {
-                        // если parent_id больше 0 то элемент добавляется в тег li с id который равен parent_id
-                        $('#' + item.parent_id).append($("<ul style='list-style-type: none;'><li id='" + item['id'] + "' " +
+                        // If parent_id is greater than 0, then the element is added in the li tag with an id equal to parent_id
+                        $('#' + item.parent_id).append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + item['id'] + "' " +
                             "parent_id='" + item['parent_id'] + "'><p class='mb-0 pl-3'>" + item['text'] + "</p>" +
                             "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
                             "<li></ul>"));
@@ -134,43 +136,43 @@ function showRoot() {
     });
 }
 
-//  Метод для удаления корневого элемента с его дочерними элементами если таковы есть
+//  Method for removing the root element with its children if any
 function deleteRoot(id) {
     let arr = [];
     let idElem = $('#' + id);
     $.each(idElem.find('li'), function (i, el) {
-        //  запись в массив id всех вложенных дочерних эдементов
+        //  Writing to the id array of all nested children
         arr.push(el['id']);
     })
-    // удаление пустых строк
+    // Removing blank lines
     let result = arr.filter(function (e) {
         return e
     })
-    //  добавление родительского id элемента в массив
+    //  Adding the parent id of an element to an array
     result.unshift(id)
     $.ajax({
         url: 'app/main.php/',
         type: 'delete',
         data: JSON.stringify({'id': result}),
         success: function (data) {
-            //  удаление родительского элемента с дочерними если таковы имеются
+            //  Removing parent element with children if any
             $('#' + id).closest('ul').remove();
         }
     });
 }
 
-//  глобальная переменная, хранящая количество секунд, прошедших с момента нажатия ссылки
+//  A global variable that stores the number of seconds elapsed since the link was clicked
 let count = 20;
-//  глобальная переменная, хранящая идентификатор таймера
+//  Global variable storing timer ID
 let timer;
 
 /*
- * Функция, выполняет следующее:
- * 1 - выводит значения переменной count в элемент с id="countTime"
- * 2 - уменьшает значения переменной на 1
- * 3 - запускает таймер, который вызовет функцию timeCount() через 1 секунду
- * 4 - если count равне или меньше нуля то вызывать функцию stopCount()
- * 5 - закрыть модальное окно.
+ * The function does the following:
+ * 1 - outputs the values ​​of the variable count to the element with id = "countTime"
+ * 2 - decreases the values ​​of the variable by 1
+ * 3 - starts a timer that calls the timeCount() function after 1 second
+ * 4 - if count is exactly or less than zero, then call the stopCount () function
+ * 5 - close the modal window.
  * */
 function timeCount() {
     document.getElementById("countTime").innerHTML = count.toString();
@@ -184,20 +186,19 @@ function timeCount() {
     }
 }
 
-/*
- * Функция проверяет выражение !timer по правилу лжи, если оно истинно, то вызывает функцию timeCount()
- * */
+//  The function checks the expression! Timer according to the rule of lies, if it is true,
+//  then calls the timeCount() function
 function startCount() {
     if (!timer)
         timeCount();
 }
 
 /*
- * функция проверяет выражение timer по правилу лжию Если оно истинно:
- * 1 - вызывает метод clearTimeOut() для сброса таймера timer
- * 2 - вызывает метод clearTimeOut() для сброса таймера modalTimer
- * 3 - присваивает переменной timer и modalTimer значение null
- * 4 - устанавливает значение счетчика на 20 секунды.
+ * The function tests the expression timer according to the rule of falsehood If it is true:
+ * 1 - calls the clearTimeOut() method to reset the timer
+ * 2 - calls the clearTimeOut() method to reset the modalTimer()
+ * 3 - sets timer and modalTimer to null
+ * 4 - sets the counter value to 20 seconds.
  * */
 function stopCount() {
     if (timer) {

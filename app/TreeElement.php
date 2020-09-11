@@ -6,8 +6,8 @@ require_once 'main.php';
 require_once 'DB.php';
 
 /*
- * Класс TreeElement который имеет методы для получения всех записе из БД (show), создания записи в БД (create),
- * удаление записей из БД (destroy), внесение изменений в БД (edit).
+ * The Tree Element class has methods for getting all records from the database (show), creating a record
+ * in the database (create), deleting records from the database (destroy), making changes to the database (edit).
  * */
 
 class TreeElement
@@ -27,9 +27,9 @@ class TreeElement
     public function create($parentId, $text)
     {
         /*
-         * Метод для создания запсей в базе данных, данные которое получены c контроллера. При успешном добавлении данных
-         * выводит последний добавленный id последнего запроса на клиентскую часть в формате JSON.
-         * В случае ошибки отправляет данные ошибки на клиентскую часть.
+         * Method for creating records in the database, data that is received from the controller. On successful addition of data
+         * prints the last added id of the last request to the client side in JSON format.
+         * In case of an error, sends the error data to the client side.
          **/
         try {
             $data = $this->db->query("INSERT INTO tree_table(parent_id, text) VALUES ({$parentId}, '{$text}')");
@@ -50,9 +50,9 @@ class TreeElement
     public function show()
     {
         /*
-         * Метод для вывода записей которые находятся в БД. При успешном выполнении запроса выводит все данные
-         * на клиентскую часть в формате JSON. При отсутствии записей в БД выводит пустую строку.
-         * В случае ошибки отправляет данные ошибки на клиентскую часть.
+         * Method for displaying records that are in the database. On successful execution of the request, displays all
+         * data to the client side in JSON format. If there are no records in the database, it displays an empty string.
+         * In case of an error, sends the error data to the client side.
          **/
         try {
             $data = $this->db->query("SELECT * FROM tree_table ");
@@ -66,7 +66,7 @@ class TreeElement
 
     public function edit($id, $parentId, $text)
     {
-        // Метод для внесения изминений в полях БД
+        // Method for making changes to data in database fields
 
     }
 
@@ -77,15 +77,15 @@ class TreeElement
     public function destroy($id)
     {
         /*
-         * Метод для удаления записей которые находятся в БД. При успешном выполнении запроса на клиентскую часть,
-         *  отправляет JSON ответ о положительном выполнении команды. В случае ошибки отправляет данные ошибки на
-         * клиентскую часть.
+         * Method for deleting records that are in the database. Upon successful completion of the client-side request,
+         * sends a JSON response about the positive execution of the command. In case of an error, sends the error data to
+         * client side.
          **/
         try {
             foreach ($id as $value) {
                 /*
-                 * перебор полученных данных и отправка в БД запросов для удаления записи с его дочерними записями,
-                 * если  таковы имеются.
+                 * Iteration of the received data and sending queries to the database to delete a record with its child
+                 * records, if any.
                  **/
                 $this->db->query("DELETE FROM tree_table WHERE id={$value}");
             }

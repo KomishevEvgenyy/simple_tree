@@ -5,8 +5,8 @@ namespace app;
 require_once 'TreeElement.php';
 
 /*
- * Контроллер осуществляет вызов нужного метода который соответствует типу получаемого запроса. Принимает тело запроса
- * и после передает входные данные в класс TreeElement для выполнения запроса к базе данных.
+ * The controller calls the required method that matches the type of the received request. Accepts the request body
+ * and then passes the input data to the Tree Element class to execute a database query.
  * */
 
 class TreeController
@@ -14,8 +14,8 @@ class TreeController
     public static function GET($data)
     {
         /*
-         * Метод для запроса типа GET. Вызывает метод show класса TreeElement для отправки на клиентскую часть
-         * данные из БД
+         * Method for a GET request. Calls the show method of the Tree Element class to send data from the database
+         * to the client side
          * */
         $show = new TreeElement();
         print $show->show();
@@ -24,8 +24,8 @@ class TreeController
     public static function POST($data)
     {
         /*
-         * Метод для запроса типа POST. Вызывает метод create класса TreeElement для записи данных полученых с
-         * клиентсвкой части в БД
+         * Method for a POST request. Calls the create method of the TreeElement class to write data received
+         * from the client side to the database
          * */
         $parent_id = $data["parent_id"];
         $text = $data["text"];
@@ -36,18 +36,18 @@ class TreeController
     public static function DELETE($data)
     {
         /*
-         * Метод для запроса типа DELETE. Вызывает метод destroy класса TreeElement для удаления данных по полю id.
-         * Принимает JSON объект
+         * Method for a DELETE request. Calls the destroy method of the Tree Element class to remove data
+         * from the id field. Accepts a JSON object
          * */
         $id = json_decode($data, true);
-        // преобразование json в массив
+        // Json to array conversion
         $del = new TreeElement();
         print $del->destroy($id['id']);
     }
 
     public static function Put($data)
     {
-        //  Метод для запроса типа PUT
+        //  Method for PUT request
         echo 'Put method';
     }
 }

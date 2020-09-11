@@ -1,26 +1,26 @@
-<h1>Приложения для отрисовки произвольных деревьев</h1>
- <p>Кнопка «create root» создает корень дерева. 
- У «корня» есть две кнопки: «добавить узел» (в виде значка «+») 
- и «удалить узел» (в виде значка «-»)<br>
- &emsp;При нажатии на «+» добавляется новый узел, правее и ниже, относительно того, 
- рядом с которым была нажата кнопка. При нажатии на «-» - узел удаляется со всеми 
- вложенными узлами.<br>
- &emsp;Данные об узлах хранятся в БД.<br>
- При удалении узла всплывает модальное окно для пожтверждения действия с таймером в 20 секунд.
- После того как время всплывет модальное окно закроется, корень или ущле не будет удален.
+<h1>Applications for rendering arbitrary trees</h1>
+ <p>The "create root" button creates the root of the tree.
+     The "root" has two buttons: "add a node" (in the form of a "+" sign)
+     and "remove node" (in the form of a "-")<br>
+ When you click on "+", a new node is added, to the right and below, relative to
+ next to which the button was pressed. By clicking on "-" - the node will be deleted with all
+ nested nodes.<br>
+Node data is stored in the database.<br>
+ When deleting a node, a modal window pops up to confirm the action with a 20 second timer.
+ After the time the modal pops up, it will close and the root or node will not be deleted.
  </p>
- <p>Структура приложения</p>
+ <p>Application structure</p>
  <ul>
-    <li><b>app</b> - папка в которой находится основные файлы для работы с приложением
+    <li><b>app</b> - the folder where the main files for working with the application are located
     <ul>
-        <li><b>DB.php</b> - Модель для установление связи с базой данных, подготовки запросов и получения определенных данных с БД</li>
-        <li><b>main.php</b> - Хелппер который определяет тип принимаемого запроса с клиентской части приложения</li>
-        <li><b>TreeController</b> - контроллер который осуществляет вызов определенного метода который соответствует типу получаемого запроса с клиентской части приложения</li>
-        <li><b>TreeElement</b> - класс который вылняет запросы к БД</li>
+        <li><b>DB.php</b> - A model for establishing a connection with a database, preparing queries and receiving certain data from a database</li>
+        <li><b>main.php</b> - Helper that determines the type of request received from the client side of the application</li>
+        <li><b>TreeController</b> - a controller that calls a specific method that matches the type of request received from the client side of the application</li>
+        <li><b>TreeElement</b> - class that executes database queries</li>
     </ul>
     </li>
-    <li><b>assets</b> - папка в которой находятся подключаемый стили и JS файлы</li>
-    <li><b>composer.json</b> - устанавливает namespace  приложения</li>
-    <li><b>config.php</b> - файл к настройками для подключения ку базе данных</li>
-    <li><b>index.php</b> - файл для управления приложением</li>
+    <li><b>assets</b> - the folder where the included styles and JS files are located</li>
+    <li><b>composer.json</b> - sets the application namespace</li>
+    <li><b>config.php</b> - configuration file for connecting to the database</li>
+    <li><b>index.php</b> - the main file that serves the interaction of the client with the application</li>
  </ul>

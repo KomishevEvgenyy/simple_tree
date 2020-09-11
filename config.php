@@ -1,8 +1,8 @@
 <?php
 
 /*
- * файд служит для хранения данных которые нужна для подключения к базе данных. Указанные данные хранятся записаны в
- * глобальные переменные
+ * The file is used to store data that is needed to connect to the database. The specified data is stored written in
+ * global variables
  * */
 define('DB_NAME', 'tree');
 define('DB_PASSWORD', 'root');
