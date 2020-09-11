@@ -26,6 +26,7 @@ $(document).ready(function () {
      * 2 - the timeCount () function is called, which starts a timer for 20 seconds, after which the window will be
      * closed automatically if you do not select one of the actions
      * 3 - the timer reset function is called
+     * 4 - the deleteRoot() function is called to which the node id is passed
      * */
     $('#tree').on('click', '.delete', function () {
         $('#open-modal').modal('show');
@@ -35,19 +36,8 @@ $(document).ready(function () {
                 $('#open-modal').modal('hide');
                 stopCount();
             }
-        }, 20000);
-    });
-
-    /*
-    * When the click event of the "Yes" node deletion confirmation button is triggered:
-    * 1 - the deleteRoot() function is called to which the node id is passed
-    * 2 - the modal window is closed
-    * 3 - the timer reset function is called
-    * */
-    $('#open-modal').on('click', '#delRoot', function () {
-        deleteRoot($('.delete').closest('li').attr('id'));
-        $('#open-modal').modal('hide');
-        stopCount();
+        }, 10000000);
+        deleteRoot($(this).closest('li').attr('id'));
     });
 
     /*
@@ -116,7 +106,7 @@ function showRoot() {
                         // If parent_id is 0, then the element is added in the div tag with id = tree
                         $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + value['id'] + "' " +
                             "parent_id='" + value['parent_id'] + "'><p class='mb-0 pl-3'>" + value['text'] + "</p>" +
-                            "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
+                            "<button class='delete btn btn-danger mb-1'>-</button> <button class='add btn btn-success'>+</button>" +
                             "<li></ul>"));
                     }
                 });
@@ -127,7 +117,7 @@ function showRoot() {
                         // If parent_id is greater than 0, then the element is added in the li tag with an id equal to parent_id
                         $('#' + item.parent_id).append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + item['id'] + "' " +
                             "parent_id='" + item['parent_id'] + "'><p class='mb-0 pl-3'>" + item['text'] + "</p>" +
-                            "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
+                            "<button class='delete btn btn-danger mb-1'>-</button> <button class='add btn btn-success'>+</button>" +
                             "<li></ul>"));
                     }
                 });
@@ -138,26 +128,37 @@ function showRoot() {
 
 //  Method for removing the root element with its children if any
 function deleteRoot(id) {
-    let arr = [];
-    let idElem = $('#' + id);
-    $.each(idElem.find('li'), function (i, el) {
-        //  Writing to the id array of all nested children
-        arr.push(el['id']);
-    })
-    // Removing blank lines
-    let result = arr.filter(function (e) {
-        return e
-    })
-    //  Adding the parent id of an element to an array
-    result.unshift(id)
-    $.ajax({
-        url: 'app/main.php/',
-        type: 'delete',
-        data: JSON.stringify({'id': result}),
-        success: function (data) {
-            //  Removing parent element with children if any
-            $('#' + id).closest('ul').remove();
-        }
+    /*
+    * When the click event of the "Yes" node deletion confirmation button is triggered:
+    * 1 - data is transferred to be deleted from the database
+    * 2 - the modal window is closed
+    * 3 - the timer reset function is called
+    * */
+    $('#open-modal').on('click', '#delRoot', function () {
+        let arr = [];
+        let idElem = $('#' + id);
+        $.each(idElem.find('li'), function (i, el) {
+            //  Writing to the id array of all nested children
+            arr.push(el['id']);
+        })
+        // Removing blank lines
+        let result = arr.filter(function (e) {
+            return e
+        })
+        //  Adding the parent id of an element to an array
+        result.unshift(id)
+        $.ajax({
+            url: 'app/main.php/',
+            type: 'delete',
+            data: JSON.stringify({'id': result}),
+            success: function (data) {
+                //  Removing parent element with children if any
+                $('#' + id).closest('ul').remove();
+            }
+        });
+
+        $('#open-modal').modal('hide');
+        stopCount();
     });
 }
 
