@@ -11,6 +11,9 @@ require_once 'TreeElement.php';
 
 class TreeController
 {
+    /**
+     * @param $data
+     */
     public static function GET($data)
     {
         /*
@@ -21,6 +24,9 @@ class TreeController
         print $show->show();
     }
 
+    /**
+     * @param $data
+     */
     public static function POST($data)
     {
         /*
@@ -33,6 +39,9 @@ class TreeController
         print $create->create($parent_id, $text);
     }
 
+    /**
+     * @param $data
+     */
     public static function DELETE($data)
     {
         /*
@@ -45,9 +54,9 @@ class TreeController
         print $del->destroy($id['id']);
     }
 
+    //  Method for PUT request
     public static function Put($data)
     {
-        //  Method for PUT request
         echo 'Put method';
     }
 }

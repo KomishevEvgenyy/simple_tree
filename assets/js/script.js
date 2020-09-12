@@ -55,6 +55,9 @@ $(document).ready(function () {
  * Function for adding a root. Accepts the id of the parent. If parent_id does not exist, assign
  * variable parent_id value 0
  * */
+/**
+ * @param {*|number} parent_id
+ */
 function createRoot(parent_id) {
     parent_id = parent_id ? parent_id : 0;
     let text = "Root";
@@ -65,14 +68,21 @@ function createRoot(parent_id) {
         dataType: 'text',
         //  Receiving data from the server as a JSON object and converting it to an array
         success: function (data) {
+            console.log(data);
             let result = JSON.parse(data);
             //  Adding a root to a DOM element
-            $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + result.id + "' parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
+            $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + result.id + "' " +
+                "parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p>" +
+                "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
+                "<li></ul>"));
         }
     });
 }
 
 // Function for adding a node. Accepts the id of the parent.
+/**
+ * @param {*|number} parent_id
+ */
 function createNode(parent_id) {
     parent_id = parent_id ? parent_id : 0;
     let text = "Root";
@@ -85,7 +95,10 @@ function createNode(parent_id) {
         success: function (data) {
             let result = JSON.parse(data);
             //  Adding a node to a parent DOM element
-            $('#' + parent_id).append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + result.id + "' parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p><button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button><li></ul>"));
+            $('#' + parent_id).append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + result.id + "' " +
+                "parent_id='" + parent_id + "'><p class='mb-0 pl-3'>" + text + "</p>" +
+                "<button class='delete btn btn-danger'>-</button> <button class='add btn btn-success'>+</button>" +
+                "<li></ul>"));
         }
     });
 }
@@ -104,21 +117,24 @@ function showRoot() {
                 $.each(result, function (key, value) {
                     if (value.parent_id === 0) {
                         // If parent_id is 0, then the element is added in the div tag with id = tree
-                        $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + value['id'] + "' " +
-                            "parent_id='" + value['parent_id'] + "'><p class='mb-0 pl-3'>" + value['text'] + "</p>" +
-                            "<button class='delete btn btn-danger mb-1'>-</button> <button class='add btn btn-success'>+</button>" +
-                            "<li></ul>"));
+                        $('#tree').append($("<ul class='pt-2' style='list-style-type: none;'>" +
+                            "<li id='" + value['id'] + "' parent_id='" + value['parent_id'] + "'>" +
+                            "<p class='mb-0 pl-3'>" + value['text'] + "</p>" +
+                            "<button class='delete btn btn-danger mb-1'>-</button> " +
+                            "<button class='add btn btn-success'>+</button> <li></ul>"));
                     }
                 });
                 //  Array elements that are greater than the 0th element and are nodes are displayed in the parent
                 //  li tag with id = parent
                 $.each(result, function (i, item) {
                     if (item.parent_id > 0) {
-                        // If parent_id is greater than 0, then the element is added in the li tag with an id equal to parent_id
-                        $('#' + item.parent_id).append($("<ul class='pt-2' style='list-style-type: none;'><li id='" + item['id'] + "' " +
-                            "parent_id='" + item['parent_id'] + "'><p class='mb-0 pl-3'>" + item['text'] + "</p>" +
-                            "<button class='delete btn btn-danger mb-1'>-</button> <button class='add btn btn-success'>+</button>" +
-                            "<li></ul>"));
+                        // If parent_id is greater than 0, then the element is added in the li tag with an id
+                        // equal to parent_id
+                        $('#' + item.parent_id).append($("<ul class='pt-2' style='list-style-type: none;'>" +
+                            "<li id='" + item['id'] + "' parent_id='" + item['parent_id'] + "'>" +
+                            "<p class='mb-0 pl-3'>" + item['text'] + "</p>" +
+                            "<button class='delete btn btn-danger mb-1'>-</button> " +
+                            "<button class='add btn btn-success'>+</button> <li></ul>"));
                     }
                 });
             } else return "";

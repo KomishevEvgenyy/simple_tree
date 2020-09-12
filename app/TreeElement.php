@@ -14,6 +14,9 @@ class TreeElement
 {
     public $db;
 
+    /**
+     * TreeElement constructor.
+     */
     public function __construct()
     {
         $this->db = new DB();
@@ -27,7 +30,8 @@ class TreeElement
     public function create($parentId, $text)
     {
         /*
-         * Method for creating records in the database, data that is received from the controller. On successful addition of data
+         * Method for creating records in the database, data that is received from the controller.
+         * On successful addition of data
          * prints the last added id of the last request to the client side in JSON format.
          * In case of an error, sends the error data to the client side.
          **/
@@ -44,7 +48,6 @@ class TreeElement
     }
 
     /**
-     * @param $id
      * @return string
      */
     public function show()
@@ -64,6 +67,11 @@ class TreeElement
         print json_encode($data->fetchAll());
     }
 
+    /**
+     * @param $id
+     * @param $parentId
+     * @param $text
+     */
     public function edit($id, $parentId, $text)
     {
         // Method for making changes to data in database fields
@@ -78,15 +86,11 @@ class TreeElement
     {
         /*
          * Method for deleting records that are in the database. Upon successful completion of the client-side request,
-         * sends a JSON response about the positive execution of the command. In case of an error, sends the error data to
-         * client side.
+         * sends a JSON response about the positive execution of the command. In case of an error, sends the error
+         * data to client side.
          **/
         try {
             foreach ($id as $value) {
-                /*
-                 * Iteration of the received data and sending queries to the database to delete a record with its child
-                 * records, if any.
-                 **/
                 $this->db->query("DELETE FROM tree_table WHERE id={$value}");
             }
         } catch (\Exception $e) {

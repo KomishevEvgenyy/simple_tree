@@ -7,8 +7,9 @@ require_once '../config.php';
 use mysqli;
 
 /*
- * The DB model is used to establish a connection with the database, which is installed automatically when the object is loaded
- * of this class. The data for connecting to the database are located in the config.php file as global variables.
+ * The DB model is used to establish a connection with the database, which is installed automatically when the
+ * object is loaded of this class. The data for connecting to the database are located in the config.php
+ * file as global variables.
  * The model also contains a method for sending queries to the query database.
  * method for getting all records from the database fetchAll ()
  * method to get all records from the database as an array fetchArray ()
@@ -33,25 +34,36 @@ class DB
     //  Request counter
     public $query_count = 0;
 
-    public function __construct($dbhost = DB_HOST, $dbuser = DB_USER, $dbpass = DB_PASSWORD, $dbname = DB_NAME, $charset = 'utf8')
+    /**
+     * DB constructor.
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpass
+     * @param string $dbname
+     * @param string $charset
+     * @throws \Exception
+     */
+    public function __construct($dbhost = DB_HOST, $dbuser = DB_USER,
+                                $dbpass = DB_PASSWORD, $dbname = DB_NAME,
+                                $charset = 'utf8')
     {
-        // Making a connection to a database table
         $this->connection = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
-        // Execute error () if there was a connection error
         if ($this->connection->connect_error) {
             $this->error('Failed to connect to MySQL - ' . $this->connection->connect_error);
         }
-        // If the connection was successful, add utf8 encoding to the connection
         $this->connection->set_charset($charset);
     }
 
+    /**
+     * @param $query
+     * @return $this
+     * @throws \Exception
+     */
     public function query($query)
     {
-        // If the connection to the database was not closed earlier, then close
         if (!$this->query_closed) {
             $this->query->close();
         }
-        // If there is a connection to the database, write the prepared query to the query variable
         if ($this->query = $this->connection->prepare($query)) {
             if (func_num_args() > 1) {
                 $x = func_get_args();
@@ -72,22 +84,23 @@ class DB
                 array_unshift($args_ref, $types);
                 call_user_func_array(array($this->query, 'bind_param'), $args_ref);
             }
-            // Running a prepared execution query
             $this->query->execute();
-            // If there is an error, call the error method to display this error
             if ($this->query->errno) {
                 $this->error('Unable to process MySQL query (check your params) - ' . $this->query->error);
             }
             $this->query_closed = FALSE;
             $this->query_count++;
         } else {
-            // If there is an error, call the error method to display this error
             $this->error('Unable to prepare MySQL statement (check your syntax) - ' . $this->connection->error);
         }
         return $this;
     }
 
 
+    /**
+     * @param null $callback
+     * @return array
+     */
     public function fetchAll($callback = null)
     {
         $params = array();
@@ -115,22 +128,19 @@ class DB
         return $result;
     }
 
+    /**
+     * @return array
+     */
     public function fetchArray()
     {
         $params = array();
         $row = array();
-        // Retrieving table metadata after query
         $meta = $this->query->result_metadata();
-        // Get column names from table metadata and write to array
         while ($field = $meta->fetch_field()) {
             $params[] = &$row[$field->name];
         }
-        // Using the callback method, we call the query function of which we pass the parameters of the columns
-        // obtained earlier
         call_user_func_array(array($this->query, 'bind_result'), $params);
-        // An array into which rows with data from the table will be written
         $result = array();
-        // We get the next row indexed both by the table names and their numbers
         while ($this->query->fetch()) {
             foreach ($row as $key => $val) {
                 $result[$key] = $val;
@@ -141,22 +151,34 @@ class DB
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function close()
     {
         return $this->connection->close();
     }
 
+    /**
+     * @return mixed
+     */
     public function numRows()
     {
         $this->query->store_result();
         return $this->query->num_rows;
     }
 
+    /**
+     * @return mixed
+     */
     public function affectedRows()
     {
         return $this->query->affected_rows;
     }
 
+    /**
+     * @return mixed
+     */
     public function lastInsertID()
     {
         return $this->connection->insert_id;
@@ -173,6 +195,10 @@ class DB
         }
     }
 
+    /**
+     * @param $var
+     * @return string
+     */
     private function _gettype($var)
     {
         if (is_string($var)) return 's';
